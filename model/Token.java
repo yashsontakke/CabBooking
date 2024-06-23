@@ -16,7 +16,7 @@ public class Token {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID tokenId;
 	
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.PERSIST )
 	private CurrentUserSession user ;
 
 	public UUID getTokenId() {

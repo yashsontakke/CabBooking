@@ -1,9 +1,11 @@
 package com.spring.cab.service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.spring.cab.Exception.CurrentUserSessionException;
 import com.spring.cab.Exception.LoginException;
 import com.spring.cab.Repository.AdminRepository;
 import com.spring.cab.Repository.CurrentUserSessionRepository;
@@ -14,6 +16,8 @@ import com.spring.cab.model.CurrentUserSession;
 import com.spring.cab.model.Customer;
 import com.spring.cab.model.Token;
 import com.spring.cab.model.UserLoginDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 
@@ -96,5 +100,38 @@ public class UserLoginServiceImpl implements UserLoginService {
 		
 	  
 	   }
+	
+	@Override
+	public String LogOut(HttpServletRequest request) throws CurrentUserSessionException {
+		// TODO Auto-generated method stub
+		String token = extractTokenFromHeader(request);
+        if (token == null) {
+            throw new CurrentUserSessionException("Token not found in request headers");
+        }
+        System.out.println(token);
+        
+        UUID tokenUUID = UUID.fromString(token);
+        System.out.println(tokenUUID);
+        
+		Optional<Token> validAdminOrCustomer = tokenRepository.findById(tokenUUID);
+		
+		if(validAdminOrCustomer.isPresent()) {
+			
+			tokenRepository.delete(validAdminOrCustomer.get());
+			return "User Logged Out Successfully";
+			
+		}
+		else {
+			throw new CurrentUserSessionException("User Not Logged In with this Credentials");
+		}
+	}
+	private String extractTokenFromHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7); // Remove "Bearer " prefix
+        }
+        return null;
+    }
+
 	
 }

@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.cab.Exception.AdminException;
+import com.spring.cab.Exception.CurrentUserSessionException;
 import com.spring.cab.Exception.LoginException;
 import com.spring.cab.model.CurrentUserSession;
 import com.spring.cab.model.UserLoginDTO;
 import com.spring.cab.service.UserLoginService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -30,6 +32,11 @@ public class LoginController {
 	    return new ResponseEntity<CurrentUserSession>(userLoginService.login(userLoginDto), HttpStatus.ACCEPTED);
 	}
 
-	
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(HttpServletRequest request) throws CurrentUserSessionException{
+		System.out.println("inside login controller");
+	    return new ResponseEntity<String>(userLoginService.LogOut(request), HttpStatus.ACCEPTED);
+	}
+
 		
 }
