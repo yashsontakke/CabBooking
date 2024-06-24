@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.cab.Exception.AdminException;
+import com.spring.cab.Exception.CurrentUserSessionException;
+import com.spring.cab.Exception.LoginException;
 import com.spring.cab.model.Admin;
 import com.spring.cab.service.AdminService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/admin")
@@ -25,11 +29,17 @@ public class AdminController {
 	}
 
 
-
 	@PostMapping("/register")
 	public ResponseEntity<Admin> registerAdmin(@RequestBody Admin admin ) throws AdminException {
 		System.out.println("in admin controller register method");
 		return new ResponseEntity<Admin>(adminService.insertAdmin(admin),HttpStatus.CREATED);
+	}
+	
+
+	@PostMapping("/update")
+	public ResponseEntity<Admin> updateAdmin(HttpServletRequest request  , @RequestBody Admin admin ) throws AdminException, CurrentUserSessionException, LoginException {
+		System.out.println("in admin controller register method");
+		return new ResponseEntity<Admin>(adminService.updateAdmin(request , admin),HttpStatus.OK);
 	}
 	
 }

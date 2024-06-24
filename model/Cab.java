@@ -1,7 +1,9 @@
 package com.spring.cab.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,5 +31,7 @@ public class Cab {
 	
 	@OneToOne
 	@JsonIgnore
+	@JsonBackReference 
 	private Driver driver;
+	
 }

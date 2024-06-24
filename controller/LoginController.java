@@ -1,5 +1,7 @@
 package com.spring.cab.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.cab.Exception.CurrentUserSessionException;
 import com.spring.cab.Exception.LoginException;
-import com.spring.cab.model.CurrentUserSession;
 import com.spring.cab.model.UserLoginDTO;
 import com.spring.cab.service.UserLoginService;
 
@@ -27,13 +28,13 @@ public class LoginController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<CurrentUserSession> login(@RequestBody UserLoginDTO userLoginDto) throws LoginException{
+	public ResponseEntity<UUID> login(@RequestBody UserLoginDTO userLoginDto) throws LoginException{
 		System.out.println("inside login controller");
-	    return new ResponseEntity<CurrentUserSession>(userLoginService.login(userLoginDto), HttpStatus.ACCEPTED);
+	    return new ResponseEntity<UUID>(userLoginService.login(userLoginDto), HttpStatus.ACCEPTED);
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(HttpServletRequest request) throws CurrentUserSessionException{
+	public ResponseEntity<String> logout(HttpServletRequest request) throws CurrentUserSessionException, LoginException{
 		System.out.println("inside login controller");
 	    return new ResponseEntity<String>(userLoginService.LogOut(request), HttpStatus.ACCEPTED);
 	}

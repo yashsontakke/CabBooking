@@ -10,6 +10,6 @@ import com.spring.cab.model.CurrentUserSession;
 @Repository
 public interface CurrentUserSessionRepository extends JpaRepository<CurrentUserSession,Integer> {
 
-
+		Optional<CurrentUserSession> findByCurrUserIdAndCurrRole(int userId , String role );
 
 }
