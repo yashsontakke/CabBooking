@@ -88,8 +88,8 @@ public class AdminServiceImpl implements  AdminService {
 		Admin admin = searchForLoginAdmin(tokenUUID);		
 						
 		adminRepository.delete(admin);
-//		currentUserSessionRepository.deleteByCurrUserId(admin.getAdminId());
-		tokenRepository.deleteById(tokenUUID);
+		
+		tokenRepository.deleteById(tokenUUID); // associated current session user will also be deleted 
 			 
 		return admin ;
 				
