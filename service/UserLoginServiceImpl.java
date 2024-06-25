@@ -78,28 +78,31 @@ public class UserLoginServiceImpl implements UserLoginService {
 			return token.getTokenId();
 		}
 		
+		if(customer.isPresent()) {
+			Optional<CurrentUserSession> user = currentUserSessionRepository.findById(customer.get().getCustomerId());
+			
+			   if(user.isPresent()) throw new LoginException("User Already Login");
+				
+				if(!customer.get().getPassword().equals(loginUserDTO.getPassword())){
+					throw new LoginException("Wrong Password ");
+				}
+				
+				CurrentUserSession currentUser = new CurrentUserSession();
+				currentUser.setCurrUserId(customer.get().getCustomerId());
+				currentUser.setCurrRole("Customer");
+				currentUser.setCurrStatus("Login Successfull");
+				
+				Token token = new Token();
+				token.setUser(currentUser);
+				
+				tokenRepository.save(token);
+				currentUserSessionRepository.save(currentUser);
+				
+				return token.getTokenId();
+		}
 	
-		 Optional<CurrentUserSession> user = currentUserSessionRepository.findById(customer.get().getCustomerId());
-		
-		 if(user.isPresent()) throw new LoginException("User Already Login");
-			
-			if(!customer.get().getPassword().equals(loginUserDTO.getPassword())){
-				throw new LoginException("Wrong Password ");
-			}
-			
-			CurrentUserSession currentUser = new CurrentUserSession();
-			currentUser.setCurrUserId(customer.get().getCustomerId());
-			currentUser.setCurrRole("Customer");
-			currentUser.setCurrStatus("Login Successfull");
-			
-			Token token = new Token();
-			token.setUser(currentUser);
-			
-			tokenRepository.save(token);
-			currentUserSessionRepository.save(currentUser);
-			
-			return token.getTokenId();
-		
+		   
+		throw new LoginException("No User Available");
 	  
 	   }
 	

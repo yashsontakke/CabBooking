@@ -34,7 +34,6 @@ public class AdminServiceImpl implements  AdminService {
 	}
 
 
-
 	@Override
 	public Admin insertAdmin(Admin admin) throws AdminException {
 		// TODO Auto-generated method stub
@@ -58,22 +57,19 @@ public class AdminServiceImpl implements  AdminService {
 		
 		UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);
 		
-		System.out.println(tokenUUID);
+		
 		
 		Optional<Token> validUser = tokenRepository.findById(tokenUUID);
 		
-		if(!validUser.isPresent()) {
+		if(!validUser.isPresent())  throw new AdminException("User is not logged in");
 			
-			throw new AdminException("User is not logged in");
-			
-		}
+	
 		
 		int userId = validUser.get().getUser().getCurrUserId();
-		System.out.println(userId);
+	
 		
 		Optional<CurrentUserSession> currentUser = currentUserSessionRepository.findByCurrUserIdAndCurrRole(userId , "Admin");
 		
-		System.out.println(currentUser);
 		
 		if(!currentUser.isPresent()) throw new AdminException("No Admin with given token");
 		
@@ -81,6 +77,44 @@ public class AdminServiceImpl implements  AdminService {
 		return updateAdminProperties(toUpdateAdmin.get(),admin);				
 		
 	}
+	
+	
+	@Override 
+	public Admin deleteAdmin(HttpServletRequest request ) throws AdminException, LoginException, CurrentUserSessionException {
+		
+		UUID tokenUUID = extractTokenFromHeaderAndValidate(request);
+		
+		System.out.println(tokenUUID);
+		Admin admin = searchForLoginAdmin(tokenUUID);		
+						
+		adminRepository.delete(admin);
+//		currentUserSessionRepository.deleteByCurrUserId(admin.getAdminId());
+		tokenRepository.deleteById(tokenUUID);
+			 
+		return admin ;
+				
+	}
+	
+	
+	public Admin searchForLoginAdmin(UUID tokenUUID ) throws AdminException {
+		Optional<Token> validUser = tokenRepository.findById(tokenUUID);
+		
+		if(!validUser.isPresent())  throw new AdminException("User is not logged in");
+			
+		int userId = validUser.get().getUser().getCurrUserId();
+			
+		Optional<CurrentUserSession> currentUser = currentUserSessionRepository.findByCurrUserIdAndCurrRole(userId , "Admin");
+		
+		if(!currentUser.isPresent()) throw new AdminException("No Admin with given token");
+		
+		Optional<Admin> admin = adminRepository.findById(currentUser.get().getCurrUserId());
+		
+		System.out.println(admin +"@114");
+		
+		return admin.get() ;
+	}
+	
+	
 	
 	public Admin updateAdminProperties(Admin toUpdateAdmin, Admin admin) {
 	    toUpdateAdmin.setUserName(admin.getUserName());

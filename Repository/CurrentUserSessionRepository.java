@@ -12,4 +12,6 @@ public interface CurrentUserSessionRepository extends JpaRepository<CurrentUserS
 
 		Optional<CurrentUserSession> findByCurrUserIdAndCurrRole(int userId , String role );
 
+		void deleteByCurrUserId(Integer adminId);
+
 }

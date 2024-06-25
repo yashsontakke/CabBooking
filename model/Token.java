@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Token {
@@ -16,7 +16,7 @@ public class Token {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID tokenId;
 	
-	@ManyToOne(cascade = {CascadeType.PERSIST , CascadeType.REMOVE})
+	@OneToOne(cascade = {CascadeType.PERSIST , CascadeType.REMOVE})
 	private CurrentUserSession user ;
 
 	public UUID getTokenId() {

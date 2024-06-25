@@ -14,4 +14,6 @@ public interface AdminService {
 	Admin updateAdmin(HttpServletRequest request, Admin admin)
 			throws AdminException, CurrentUserSessionException, LoginException;
 
+	Admin deleteAdmin(HttpServletRequest request) throws AdminException, LoginException, CurrentUserSessionException;
+
 }

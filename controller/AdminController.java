@@ -38,8 +38,11 @@ public class AdminController {
 
 	@PostMapping("/update")
 	public ResponseEntity<Admin> updateAdmin(HttpServletRequest request  , @RequestBody Admin admin ) throws AdminException, CurrentUserSessionException, LoginException {
-		System.out.println("in admin controller register method");
 		return new ResponseEntity<Admin>(adminService.updateAdmin(request , admin),HttpStatus.OK);
+	}
+	@PostMapping("/delete")
+	public ResponseEntity<Admin> deleteAdmin(HttpServletRequest request  ) throws AdminException, CurrentUserSessionException, LoginException {
+		return new ResponseEntity<Admin>(adminService.deleteAdmin(request),HttpStatus.OK);
 	}
 	
 }
