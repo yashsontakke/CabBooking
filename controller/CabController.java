@@ -4,18 +4,21 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.spring.cab.Exception.AdminException;
 import com.spring.cab.Exception.CabException;
 import com.spring.cab.Exception.CurrentUserSessionException;
 import com.spring.cab.Exception.LoginException;
 import com.spring.cab.model.Cab;
 import com.spring.cab.service.CabService;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -44,8 +47,13 @@ public class CabController {
 	}
 	
 	@GetMapping("/countCabsOfType/{carType}")
-	public ResponseEntity<Integer> countCabsOfType(@PathVariable("carType") String carType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException{
-		return new ResponseEntity<Integer>(cabService.countCabsOfType(carType, request),HttpStatus.OK);
+	public ResponseEntity<Integer> countCabsOfType(@PathVariable("carType") String cabType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException{
+		return new ResponseEntity<Integer>(cabService.countCabsOfType(cabType, request),HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/deleteCab/{cabId}")
+	public ResponseEntity<Cab> deleteCab(@PathVariable("cabId") String cabId, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException{
+		return new ResponseEntity<Cab>(cabService.delete(cabId, request),HttpStatus.OK);
 	}
 		
 }

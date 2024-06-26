@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-
 import com.spring.cab.Exception.AdminException;
 import com.spring.cab.Exception.CabException;
 import com.spring.cab.Exception.CurrentUserSessionException;
@@ -36,7 +34,6 @@ public class CabServiceImpl implements CabService{
 		this.currentUserSessionRepository = currentUserSessionRepository;
 	}
 
-
 	@Override
 	public Cab insert(Cab cab) throws CabException {
 		Optional<Cab> findCab = cabRepository.findByCarNumber(cab.getCarNumber());
@@ -46,8 +43,8 @@ public class CabServiceImpl implements CabService{
 		return cabRepository.save(cab);
 		
 	}
-
-//	@Override 
+	
+ 	@Override 
 	public Cab updateCab(Cab cab ,HttpServletRequest request ) throws CabException, AdminException, LoginException, CurrentUserSessionException{
 		
 		UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);				
@@ -114,31 +111,12 @@ public class CabServiceImpl implements CabService{
 		}
 	}
 	
-	private UUID extractTokenFromHeaderAndValidate(HttpServletRequest request) throws LoginException , CurrentUserSessionException{
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token =  authHeader.substring(7); // Remove "Bearer " prefix
-            if (token == null) {
-                throw new CurrentUserSessionException("Token not found in request headers");
-            }
+	
 
-           
-            try {
-                UUID tokenUUID = UUID.fromString(token);
-                return tokenUUID;
-               
-            } catch (IllegalArgumentException e) {
-                throw new CurrentUserSessionException("Invalid token format");
-            }
-        }else {
-        	throw new LoginException("invalid token");
-        }
- 
-    }
-
+	
 	@Override
 	public Integer countCabsOfType(String cabType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException {
-UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);				
+	UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);				
 		
 		Optional<Token> validUser = tokenRepository.findById(tokenUUID);
 		
@@ -168,5 +146,56 @@ UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);
 			throw new CurrentUserSessionException("User not login In or User is not an Admin");
 		}
 	}
+
+	@Override
+	public Cab  delete(String cabId, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException {
+		
+		UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);
+		
+		Optional<Token> validUser = tokenRepository.findById(tokenUUID);
+		
+		if(!validUser.isPresent())  throw new AdminException("User is not logged in");
+						
+		int userId = validUser.get().getUser().getCurrUserId();
+		
+		Optional<CurrentUserSession> validuser = currentUserSessionRepository.findByCurrUserIdAndCurrRole(userId,"Admin");
+
+		if(validuser.isPresent()) {
+			Optional<Cab> cb = cabRepository.findByCabId(Integer.parseInt(cabId));
+			if(cb.isPresent()) {
+				Cab cab = cb.get();
+				cabRepository.delete(cab);
+				return cab;
+			}
+			else {
+				throw new CabException("Cab is not Registered");
+			}
+		}
+		else {
+			throw new CurrentUserSessionException("User not login In or User is not an Admin");
+		}
+	}
+	
+	private UUID extractTokenFromHeaderAndValidate(HttpServletRequest request) throws LoginException , CurrentUserSessionException{
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token =  authHeader.substring(7); // Remove "Bearer " prefix
+            if (token == null) {
+                throw new CurrentUserSessionException("Token not found in request headers");
+            }
+
+           
+            try {
+                UUID tokenUUID = UUID.fromString(token);
+                return tokenUUID;
+               
+            } catch (IllegalArgumentException e) {
+                throw new CurrentUserSessionException("Invalid token format");
+            }
+        }else {
+        	throw new LoginException("invalid token");
+        }
+ 
+    }
 }
 

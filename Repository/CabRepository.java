@@ -12,4 +12,6 @@ public interface CabRepository extends JpaRepository<Cab, Integer> {
 
 	Optional<Cab> findByCarNumber(String carNumber);
 
+	Optional<Cab> findByCabId(Integer cabId);
+
 }

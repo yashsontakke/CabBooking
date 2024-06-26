@@ -22,6 +22,9 @@ public  interface  CabService {
 			throws AdminException, CurrentUserSessionException, CabException, LoginException;
 
 	Integer countCabsOfType(String carType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException;
+
+
+	Cab delete(String cabId, HttpServletRequest request) throws CurrentUserSessionException, CabException, AdminException, LoginException;
 	
 	
 }
