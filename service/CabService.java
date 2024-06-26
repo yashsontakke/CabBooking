@@ -1,5 +1,7 @@
 package com.spring.cab.service;
 
+import java.util.List;
+
 import com.spring.cab.Exception.AdminException;
 import com.spring.cab.Exception.CabException;
 import com.spring.cab.Exception.CurrentUserSessionException;
@@ -13,4 +15,8 @@ public  interface  CabService {
 
 
 	Cab updateCab(Cab cab, HttpServletRequest request) throws CabException, AdminException, LoginException, CurrentUserSessionException;
+
+
+	List<Cab> getCabOfTypes(String cabType, HttpServletRequest request)
+			throws AdminException, CurrentUserSessionException, CabException, LoginException;
 }

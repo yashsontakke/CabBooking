@@ -1,5 +1,7 @@
 package com.spring.cab.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,7 +11,6 @@ import com.spring.cab.Exception.AdminException;
 import com.spring.cab.Exception.CabException;
 import com.spring.cab.Exception.CurrentUserSessionException;
 import com.spring.cab.Exception.LoginException;
-import com.spring.cab.Repository.AdminRepository;
 import com.spring.cab.Repository.CabRepository;
 import com.spring.cab.Repository.CurrentUserSessionRepository;
 import com.spring.cab.Repository.TokenRepository;
@@ -72,6 +73,40 @@ public class CabServiceImpl implements CabService{
 			else {
 				throw new CabException("Cab is not Registered");
 			}
+		}
+		else {
+			throw new CurrentUserSessionException("User not login In or User is not an Admin");
+		}
+	}
+	
+	@Override
+	public List<Cab> getCabOfTypes(String cabType ,HttpServletRequest request) throws AdminException, CurrentUserSessionException, CabException, LoginException {
+
+		
+		UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);				
+		
+		Optional<Token> validUser = tokenRepository.findById(tokenUUID);
+		
+		if(!validUser.isPresent())  throw new AdminException("User is not logged in");
+						
+		int userId = validUser.get().getUser().getCurrUserId();
+		
+		Optional<CurrentUserSession> validuser = currentUserSessionRepository.findByCurrUserIdAndCurrRole(userId,"Admin");
+		if(validuser.isPresent()) {
+			Optional<List<Cab>> cb = Optional.of(cabRepository.findAll());
+			
+			System.out.println(cb);
+			
+			List<Cab> cabByTypes = new ArrayList<>();
+			
+			for(Cab cab: cb.get()) {
+				if(cab.getCarType().equals(cabType)) {
+					cabByTypes.add(cab);
+				}
+			}
+			
+			if(cabByTypes.isEmpty()) throw new CabException("No Cab of Type "+ cabType +" isAvailable" );
+			return cabByTypes ;			
 		}
 		else {
 			throw new CurrentUserSessionException("User not login In or User is not an Admin");
