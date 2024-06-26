@@ -11,6 +11,7 @@ import com.spring.cab.model.Cab;
 import jakarta.servlet.http.HttpServletRequest;
 
 public  interface  CabService {
+	
 	Cab insert(Cab cab ) throws CabException;
 
 
@@ -19,4 +20,8 @@ public  interface  CabService {
 
 	List<Cab> getCabOfTypes(String cabType, HttpServletRequest request)
 			throws AdminException, CurrentUserSessionException, CabException, LoginException;
+
+	Integer countCabsOfType(String carType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException;
+	
+	
 }

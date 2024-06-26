@@ -92,6 +92,7 @@ public class CabServiceImpl implements CabService{
 		int userId = validUser.get().getUser().getCurrUserId();
 		
 		Optional<CurrentUserSession> validuser = currentUserSessionRepository.findByCurrUserIdAndCurrRole(userId,"Admin");
+		
 		if(validuser.isPresent()) {
 			Optional<List<Cab>> cb = Optional.of(cabRepository.findAll());
 			
@@ -134,5 +135,38 @@ public class CabServiceImpl implements CabService{
         }
  
     }
+
+	@Override
+	public Integer countCabsOfType(String cabType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException {
+UUID  tokenUUID = extractTokenFromHeaderAndValidate(request);				
+		
+		Optional<Token> validUser = tokenRepository.findById(tokenUUID);
+		
+		if(!validUser.isPresent())  throw new AdminException("User is not logged in");
+						
+		int userId = validUser.get().getUser().getCurrUserId();
+		
+		Optional<CurrentUserSession> validuser = currentUserSessionRepository.findByCurrUserIdAndCurrRole(userId,"Admin");
+		
+		if(validuser.isPresent()) {
+			Optional<List<Cab>> cb = Optional.of(cabRepository.findAll());
+			
+			System.out.println(cb);
+			
+			List<Cab> cabByTypes = new ArrayList<>();
+			
+			for(Cab cab: cb.get()) {
+				if(cab.getCarType().equals(cabType)) {
+					cabByTypes.add(cab);
+				}
+			}
+			
+			if(cabByTypes.isEmpty()) throw new CabException("No Cab of Type "+ cabType +" isAvailable" );
+			return cabByTypes.size() ;			
+		}
+		else {
+			throw new CurrentUserSessionException("User not login In or User is not an Admin");
+		}
+	}
 }
 

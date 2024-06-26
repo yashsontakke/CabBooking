@@ -42,5 +42,11 @@ public class CabController {
 	public ResponseEntity<List<Cab>> getCabByType(@PathVariable("cabType") String cabType,  HttpServletRequest request) throws AdminException, CurrentUserSessionException, CabException, LoginException{
 		return new ResponseEntity<List<Cab>>(cabService.getCabOfTypes(cabType,request), HttpStatus.OK);
 	}
+	
+	@GetMapping("/countCabsOfType/{carType}")
+	public ResponseEntity<Integer> countCabsOfType(@PathVariable("carType") String carType, HttpServletRequest request) throws CabException, CurrentUserSessionException, AdminException, LoginException{
+		return new ResponseEntity<Integer>(cabService.countCabsOfType(carType, request),HttpStatus.OK);
+	}
+		
 }
   
